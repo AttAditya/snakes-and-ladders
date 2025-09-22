@@ -8,7 +8,8 @@ public class TileCalculator {
   }
 
   public Tile getNextTile(Player player, int rolled) {
-    if (player.getCurrentTile() == null) return board.getTile(1);
+    if (player.getCurrentTile() == null)
+      return board.getTile(1);
 
     int currentPosition = player.getCurrentTile().getPosition();
     Tile nextTile = board.getTile(currentPosition + rolled);

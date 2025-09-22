@@ -1,21 +1,22 @@
 package snakesladders;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TurnCalculator {
   private TurnNode current;
-  private final Set<Player> pendingRemovals;
+  private final Map<Player, TurnNode> playerNodeMap;
 
   public TurnCalculator(Player[] players) {
-    this.pendingRemovals = new HashSet<>();
+    this.playerNodeMap = new HashMap<>();
     
     TurnNode head = null;
     TurnNode tail = null;
 
     for (Player player : players) {
       TurnNode node = new TurnNode(player);
-      
+      playerNodeMap.put(player, node);
+
       if (tail == null) {
         head = node;
         tail = node;
@@ -34,24 +35,25 @@ public class TurnCalculator {
   }
 
   public Player getNextPlayer() {
-    while (pendingRemovals.contains(current.getPlayer())) {
-      pendingRemovals.remove(current.getPlayer());
-      
-      if (current.getNext() == current) {
-        current = null;
-        return null;
-      }
-
-      current.getPrev().setNext(current.getNext());
-      current = current.getNext();
-    }
-
     current = current.getNext();
     return current.getPlayer();
   }
 
   public void removePlayer(Player player) {
-    pendingRemovals.add(player);
+    TurnNode node = playerNodeMap.get(player);
+    playerNodeMap.remove(player);
+
+    if (node.getNext() == node) {
+      current = null;
+      return;
+    }
+
+    node.getPrev().setNext(node.getNext());
+    node.getNext().setPrev(node.getPrev());
+
+    if (node == current) {
+      current = node.getPrev();
+    }
   }
 
   public boolean hasPlayers() {
