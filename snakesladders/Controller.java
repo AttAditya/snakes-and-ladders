@@ -23,19 +23,25 @@ public class Controller {
     if (nextTile != null) player.enterTile(nextTile);
   }
 
+  private void updatePlayerStats(Player player) {
+    if (!player.getCurrentTile().isLastTile()) return;
+    
+    player.setPlayStatus(PlayStatus.COMPLETED);
+    turnCalculator.removePlayer(player);
+  }
+
+  private void checkGameCompletion() {
+    if (turnCalculator.hasPlayers()) return;
+    this.gameState = GameState.COMPLETED;
+  }
+
   public void nextTurn() {
     Player player = turnCalculator.getNextPlayer();
     
-    if (player == null) {
-      this.gameState = GameState.COMPLETED;
-      return;
-    }
-
     playTurn(player);
-    if (player.getCurrentTile().getPosition() == 100) {
-      player.setPlayStatus(PlayStatus.COMPLETED);
-      turnCalculator.removePlayer(player);
-    }
+    updatePlayerStats(player);
+
+    checkGameCompletion();
   }
 
   public void startGame() {

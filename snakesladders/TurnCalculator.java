@@ -53,4 +53,8 @@ public class TurnCalculator {
   public void removePlayer(Player player) {
     pendingRemovals.add(player);
   }
+
+  public boolean hasPlayers() {
+    return current != null;
+  }
 }
