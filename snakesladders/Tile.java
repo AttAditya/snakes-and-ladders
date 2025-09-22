@@ -9,10 +9,12 @@ public class Tile {
   private final int position;
   private Teleporter teleporter;
   private final Set<Player> occupants;
+  private boolean isLastTile;
 
   public Tile(int position) {
     this.position = position;
     this.occupants = new HashSet<>();
+    this.isLastTile = false;
   }
 
   public void setTeleporter(Teleporter teleporter) {
@@ -29,6 +31,14 @@ public class Tile {
 
   public Set<Player> getOccupants() {
     return new HashSet<>(occupants);
+  }
+
+  public boolean isLastTile() {
+    return isLastTile;
+  }
+
+  public void setLastTile(boolean isLastTile) {
+    this.isLastTile = isLastTile;
   }
 
   public void addOccupant(Player occupant) {

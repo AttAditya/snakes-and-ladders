@@ -1,42 +1,41 @@
 package snakesladders;
 
 public class Controller {
-  private Board board;
   private Dice dice;
-  private Player[] players;
-
-  private int currentPlayerIndex;
+  private TurnCalculator turnCalculator;
+  private TileCalculator tileCalculator;
   private GameState gameState;
 
   public Controller(
-    Board board,
     Dice dice,
-    Player[] players
+    TurnCalculator turnCalculator,
+    TileCalculator tileCalculator
   ) {
-    this.board = board;
     this.dice = dice;
-    this.players = players;
-    this.currentPlayerIndex = 0;
+    this.turnCalculator = turnCalculator;
+    this.tileCalculator = tileCalculator;
     this.gameState = GameState.PENDING;
   }
 
   private void playTurn(Player player) {
     int rolled = dice.roll();
-
-    Tile currentTile = player.getCurrentTile();
-    int currentPosition = currentTile.getPosition();
-    Tile nextTile = board.getTile(currentPosition + rolled);
-
-    while (nextTile.getTeleporter() != null) {
-      nextTile = nextTile.getTeleporter().getDestinationTile();
-    }
-
-    player.enterTile(nextTile);
+    Tile nextTile = tileCalculator.getNextTile(player, rolled);
+    if (nextTile != null) player.enterTile(nextTile);
   }
 
   public void nextTurn() {
-    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-    playTurn(players[currentPlayerIndex]);
+    Player player = turnCalculator.getNextPlayer();
+    
+    if (player == null) {
+      this.gameState = GameState.COMPLETED;
+      return;
+    }
+
+    playTurn(player);
+    if (player.getCurrentTile().getPosition() == 100) {
+      player.setPlayStatus(PlayStatus.COMPLETED);
+      turnCalculator.removePlayer(player);
+    }
   }
 
   public void startGame() {

@@ -5,13 +5,20 @@ public class Game {
     Board board = new Board(10, 10);
     Dice dice = Dice.getInstance();
     Player[] players = {
-      new Player(),
-      new Player(),
+      new Player("Player 1"),
+      new Player("Player 2"),
     };
-
-    Controller controller = new Controller(board, dice, players);
-    controller.startGame();
     
+    TurnCalculator turnCalculator = new TurnCalculator(players);
+    TileCalculator tileCalculator = new TileCalculator(board);
+    
+    Controller controller = new Controller(
+      dice,
+      turnCalculator,
+      tileCalculator
+    );
+    
+    controller.startGame();
     while (controller.getGameState() == GameState.IN_PROGRESS) {
       controller.nextTurn();
     }

@@ -16,14 +16,12 @@ public class Board {
         tiles[row][col] = new Tile(position);
       }
     }
+
+    tiles[rows - 1][cols - 1].setLastTile(true);
   }
 
   public Tile getTile(int position) {
-    if (1 > position || position > rows * cols) {
-      throw new IllegalArgumentException(
-        "Invalid tile position"
-      );
-    }
+    if (position < 1 || position > rows * cols) return null;
 
     int row = (position - 1) / cols;
     int col = (position - 1) % cols;
